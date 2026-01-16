@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار اقتصاد جزئي - تفاعل قوى السوق وتدخل الدولة</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .header h2 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .question-section {
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option-btn {
+            background-color: #e7f3ff;
+            border: 1px solid #d0e7ff;
+            color: #333;
+            padding: 12px;
+            width: 100%;
+            text-align: right;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover {
+            background-color: #d0e7ff;
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .feedback {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+            min-height: 25px;
+        }
+
+        .next-btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto 0;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+        }
+
+        .next-btn:hover {
+            background-color: #34495e;
+        }
+
+        .result-section {
+            text-align: center;
+            display: none;
+        }
+
+        .score-box {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <h2>اختبار مراجعة - قوى السوق</h2>
+        <p>بناءً على الملاحظات الدراسية (العرض والطلب وتدخل الدولة)</p>
+    </div>
+
+    <div id="quiz">
+        <div class="question-section">
+            <div id="question" class="question-text">جاري تحميل السؤال...</div>
+            <ul id="options" class="options-list">
+                </ul>
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <button id="next-btn" class="next-btn" onclick="nextQuestion()" style="display:none;">السؤال التالي</button>
+    </div>
+
+    <div id="result" class="result-section">
+        <h3>أتممت الاختبار!</h3>
+        <div class="score-box">النتيجة: <span id="score">0</span> / <span id="total">0</span></div>
+        <button class="next-btn" onclick="location.reload()">إعادة الاختبار</button>
+    </div>
+
+    <div class="footer">
+        إعداد: قيس جازي
+    </div>
+</div>
+
+<script>
+    // الأسئلة مستخرجة مباشرة من صور الدفتر
+    const questions = [
+        {
+            question: "في جدول تفاعل العرض والطلب (الصورة 1)، عندما تتساوي الكمية المطلوبة مع الكمية المعروضة، ماذا تسمى هذه الحالة؟",
+            options: ["نقطة الفائض", "نقطة العجز", "نقطة التوازن", "التدخل الحكومي"],
+            answer: 2
+        },
+        {
+            question: "ما هو المصطلح الذي أطلقه (آدم سميث) على القوة التي تعيد السوق إلى التوازن تلقائياً؟",
+            options: ["التسعير الجبري", "اليد الخفية", "السقف السعري", "التخطيط المركزي"],
+            answer: 1
+        },
+        {
+            question: "إذا كان سعر السوق أعلى من سعر التوازن (مثلاً السعر 10 بينما التوازن 6)، ماذا يحدث في السوق؟",
+            options: ["عجز (طلب أكبر من العرض)", "توازن", "فائض (عرض أكبر من الطلب)", "ثبات في الأسعار"],
+            answer: 2
+        },
+        {
+            question: "يعرف 'السقف السعري' (Price Ceiling) بأنه:",
+            options: ["حد أدنى للسعر يوضع أعلى التوازن", "حد أعلى للسعر يوضع أسفل التوازن", "السعر الذي تتساوى فيه الكميات", "ضريبة تفرضها الدولة"],
+            answer: 1
+        },
+        {
+            question: "ما هو الهدف الرئيسي من وضع الدولة لـ 'أرضية سعرية' (مثل الحد الأدنى للأجور)؟",
+            options: ["دعم المستهلك", "القضاء على السوق السوداء", "دعم المنتج أو العامل", "تقليل الفائض"],
+            answer: 2
+        },
+        {
+            question: "إذا كان سعر توازن البندورة 50 قرشاً، وقامت الدولة برفع السعر وتثبيته عند 1 دينار. ماذا سينتج عن ذلك؟",
+            options: ["عجز في السلعة", "فائض في السلعة", "زيادة الطلب", "اختفاء السوق السوداء"],
+            answer: 1
+        },
+        {
+            question: "تتدخل الدولة بشكل 'مباشر' في السوق من خلال:",
+            options: ["الضرائب والرسوم", "الدعاية والإعلان", "تحديد ومراقبة الأسعار (التسعير)", "تغيير ذوق المستهلك"],
+            answer: 2
+        },
+        {
+            question: "في حالة 'السقف السعري' (مثل دعم الخبز)، أين يتم تحديد السعر بالنسبة لنقطة التوازن؟",
+            options: ["أعلى من سعر التوازن", "مساوي لسعر التوازن", "أقل من سعر التوازن", "لا علاقة له بالتوازن"],
+            answer: 2
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const questionEl = document.getElementById("question");
+        const optionsEl = document.getElementById("options");
+        const feedbackEl = document.getElementById("feedback");
+        const nextBtn = document.getElementById("next-btn");
+
+        questionEl.textContent = questions[currentQuestion].question;
+        optionsEl.innerHTML = "";
+        feedbackEl.textContent = "";
+        nextBtn.style.display = "none";
+
+        questions[currentQuestion].options.forEach((option, index) => {
+            const li = document.createElement("li");
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.textContent = option;
+            btn.onclick = () => checkAnswer(index, btn);
+            li.appendChild(btn);
+            optionsEl.appendChild(li);
+        });
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        const correctIndex = questions[currentQuestion].answer;
+        const options = document.querySelectorAll(".option-btn");
+        const feedbackEl = document.getElementById("feedback");
+        const nextBtn = document.getElementById("next-btn");
+
+        // Disable all buttons
+        options.forEach(opt => opt.disabled = true);
+
+        if (selectedIndex === correctIndex) {
+            btnElement.classList.add("correct");
+            feedbackEl.textContent = "إجابة صحيحة! أحسنت";
+            feedbackEl.style.color = "green";
+            score++;
+        } else {
+            btnElement.classList.add("wrong");
+            options[correctIndex].classList.add("correct");
+            feedbackEl.textContent = "إجابة خاطئة. الإجابة الصحيحة هي الملونة بالأخضر.";
+            feedbackEl.style.color = "red";
+        }
+
+        nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("result").style.display = "block";
+        document.getElementById("score").textContent = score;
+        document.getElementById("total").textContent = questions.length;
+    }
+
+    // Start the quiz
+    loadQuestion();
+</script>
+
+</body>
+</html>
